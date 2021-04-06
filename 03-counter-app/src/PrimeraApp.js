@@ -22,7 +22,7 @@ const PrimeraApp = ( {saludo, subtitulo} ) => {
 };
 
 PrimeraApp.propTypes = {
-    saludo: PropTypes.string.isRequired,
+    saludo: PropTypes.string.isRequired
 };
 
 PrimeraApp.defaultProps = {
