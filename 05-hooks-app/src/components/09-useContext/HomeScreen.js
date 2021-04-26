@@ -5,7 +5,7 @@ export const HomeScreen = () => {
 
     // UseContext buca la instancia del contexto especificado en el arbol de componentes
     const {user} = useContext(UserContext);
-    console.log(user)
+    // console.log(user);
     return (
         <div>
             <h1>HomeScreeen</h1>

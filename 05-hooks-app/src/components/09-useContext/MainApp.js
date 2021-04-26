@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AppRouer } from './AppRouer'
+import { AppRouter } from './AppRouter'
 import { UserContext } from './UserContext'
 
 export const MainApp = () => {
@@ -12,7 +12,7 @@ export const MainApp = () => {
     } */
     return (
         <UserContext.Provider value={{user, setUser}}>
-            <AppRouer />
+            <AppRouter />
         </UserContext.Provider>
     )
 }

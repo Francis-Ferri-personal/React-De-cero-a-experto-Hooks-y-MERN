@@ -10,7 +10,7 @@ import { HomeScreen } from './HomeScreen';
 import { LoginScreen } from './LoginScreen';
 import { NavBar } from './NavBar';
 
-export const AppRouer = () => {
+export const AppRouter = () => {
     {/* La palabra exact es para que laruta deba coincidir exactamnete para que se reenderice */}
     return (
         <Router>
