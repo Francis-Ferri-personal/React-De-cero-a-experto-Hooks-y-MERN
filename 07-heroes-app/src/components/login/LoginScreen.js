@@ -1,9 +1,24 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { AuthContext } from '../../auth/AuthContext';
+import { types } from '../../types/types';
 
-export const LoginScreen = ({history}) => {
+export const LoginScreen = ({ history }) => {
+    
+    const { dispatch } = useContext( AuthContext );
+
     const handleClick = () => {
-        history.replace('/'); 
         // history.push('/');
+        // history.replace('/'); // Podria ponerse aqui tambien
+        dispatch({
+            type: types.login,
+            payload: {
+                name: "Francis Ferri"
+            }
+        });
+        // Esta tarea es asincrona por lo que noo importa donde se ponga se ejecutara despues del dispatch o almenos eso entendí
+        // history.replace('/'); 
+        const lastPath = localStorage.getItem("lastPath") || "/";
+        history.replace(lastPath);
     };
 
     return (
