@@ -1,11 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { Provider } from 'react-redux';
+
+import { store } from './store/store';
 import { AppRouter } from './routers/AppRouter'
 
 export const JournalApp = () => {
     // Tambien puede ir sin el div
     return (
-        <div>
+        <Provider store={ store }>
             <AppRouter /> 
-        </div>
-    )
+        </Provider>
+    )    
 }
+
+
