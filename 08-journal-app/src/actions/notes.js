@@ -16,9 +16,13 @@ export const startNewNotes = () => {
 			date: new Date().getTime()
 		};
 
-		const doc = await db.collection(`${uid}/jornal/notes`).add(newNote);
-		dispatch(activeNote(doc.id, newNote));
-		dispatch(addNewNote(doc.id, newNote));
+		try {
+			const doc = await db.collection(`${uid}/journal/notes`).add(newNote);
+			dispatch(activeNote(doc.id, newNote));
+			dispatch(addNewNote(doc.id, newNote));
+		} catch (error) {
+			console.log(error);
+		}
 	};
 };
 
@@ -61,8 +65,11 @@ export const startSaveNote = (note) => {
 		const noteToFirestore = { ...note };
 		delete noteToFirestore.id;
 		// TODO: HAY QUE VER SI ES NUEVA y SI LO ES SOLAMENTE GUARDAR
-		await db.doc(`${uid}/jornal/notes/${note.id}`).update(noteToFirestore);
-		// TODO: Try catch
+		try {
+			await db.doc(`/${uid}/journal/notes/${note.id}`).update(noteToFirestore);
+		} catch (error) {
+			console.log(error);
+		}
 		dispatch(refreshNote(note.id, note));
 		Swal.fire("Saved", note.title, "success");
 	};
@@ -86,7 +93,9 @@ export const startUploading = (file) => {
 			}
 		});
 		const fileUrl = await fileUpload(file);
+		console.log(activeNote);
 		activeNote.url = fileUrl;
+		console.log(activeNote);
 		dispatch(startSaveNote(activeNote));
 		Swal.close();
 	};

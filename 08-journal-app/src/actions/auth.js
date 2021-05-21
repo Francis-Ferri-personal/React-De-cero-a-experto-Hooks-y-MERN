@@ -8,7 +8,7 @@ import { uiFinishLoading, uiStartLoading } from "./ui";
 export const startLoginEmailPassword = (email, password) => {
 	return (dispatch) => {
 		dispatch(uiStartLoading());
-		firebase
+		return firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then(({ user }) => {
@@ -62,8 +62,8 @@ export const login = (uid, displayName) => ({
 export const startLogout = () => {
 	return async (dispatch) => {
 		await firebase.auth().signOut();
-		dispatch(noteLogout());
 		dispatch(logout());
+		dispatch(noteLogout());
 	};
 };
 
