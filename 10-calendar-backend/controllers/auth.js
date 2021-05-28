@@ -1,51 +1,94 @@
-// Esto solo se hace para obtener el tipado
-// Se usa res = response para que agreure ayudas
+// Esto solo se hace para obtener el tipado. Se usa res = response para que agreure ayudas
 const { response } = require("express");
-const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
-const crearUsuario = (req, res = response) => {
-	const { name, email, password } = req.body;
+const Usuario = require("../models/Usuario");
+const { generarJWT } = require("../helpers/jwt");
 
-	// Manejo de erores
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(400).json({
+const crearUsuario = async (req, res = response) => {
+	const { email, password } = req.body;
+	try {
+		let usuario = await Usuario.findOne({ email });
+		if (usuario) {
+			return res.status(400).json({
+				ok: false,
+				msg: "Un usuario existe con ese correo"
+			});
+		}
+		// Ya con el Schema sabe que camps tiene y descarta los extras
+		usuario = new Usuario(req.body);
+
+		// Encriptar contraseña
+		const salt = bcrypt.genSaltSync();
+		usuario.password = bcrypt.hashSync(password, salt);
+
+		await usuario.save();
+
+		// Generar nuestro JWT
+		const token = await generarJWT(usuario.id, usuario.name);
+
+		res.status(201).json({
+			ok: true,
+			uid: usuario.id,
+			name: usuario.name,
+			token
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
 			ok: false,
-			errors: errors.mapped()
+			msg: "Por favor hable con el administrador"
 		});
 	}
-	res.status(201).json({
-		ok: true,
-		msg: "registro",
-		name,
-		email,
-		password
-	});
 };
 
-const loginUsuario = (req, res = response) => {
+const loginUsuario = async (req, res = response) => {
 	const { email, password } = req.body;
 
-	// Manejo de erores
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(400).json({
+	try {
+		const usuario = await Usuario.findOne({ email });
+		if (!usuario) {
+			return res.status(400).json({
+				ok: false,
+				msg: "El usuario no existe con ese email"
+			});
+		}
+
+		// COnfirmar los passsword
+		const validPassword = bcrypt.compareSync(password, usuario.password);
+		if (!validPassword) {
+			return res.status(400).json({
+				ok: false,
+				msg: "Password incorrecto"
+			});
+		}
+
+		// Generar nuestro JWT
+		const token = await generarJWT(usuario.id, usuario.name);
+
+		res.status(200).json({
+			ok: true,
+			uid: usuario.id,
+			name: usuario.name,
+			token
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({
 			ok: false,
-			errors: errors.mapped()
+			msg: "Por favor hable con el administrador"
 		});
 	}
-	res.json({
-		ok: true,
-		msg: "registro",
-		email,
-		password
-	});
 };
 
-const revalidatToken = (req, res = response) => {
+const revalidatToken = async (req, res = response) => {
+	const { uid, name } = req;
+
+	// generr un nuevo JWT y retornarlo en esta peticion
+	const token = await generarJWT(uid, name);
 	res.json({
 		ok: true,
-		msg: "renew"
+		token
 	});
 };
 
