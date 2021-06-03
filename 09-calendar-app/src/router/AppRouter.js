@@ -11,7 +11,6 @@ export const AppRouter = () => {
 	// TODO: Para que no se pierda el logeuo puedes poner que se haga renew cada vez que recarga la pag y  un setInterval por si no recraga la pag en mucho tiempo
 	const dispatch = useDispatch();
 	const { checking, uid } = useSelector((state) => state.auth);
-	console.log(checking);
 
 	useEffect(() => {
 		dispatch(startCheckling());
